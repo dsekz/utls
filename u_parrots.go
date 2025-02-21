@@ -3209,6 +3209,10 @@ func (uconn *UConn) ApplyPreset(p *ClientHelloSpec) error {
 		uconn.HandshakeState.Hello.SessionId = nil
 	}
 
+	if p.CustomSessionID != nil {
+		uconn.HandshakeState.Hello.SessionId = p.CustomSessionID
+	}
+
 	uconn.Extensions = make([]TLSExtension, len(p.Extensions))
 	copy(uconn.Extensions, p.Extensions)
 

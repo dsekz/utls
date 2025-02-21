@@ -197,7 +197,8 @@ type ClientHelloSpec struct {
 	// sessionID may or may not depend on ticket; nil => random
 	GetSessionID func(ticket []byte) [32]byte
 
-	DisableSessionID bool // if true, SessionID will be empty
+	DisableSessionID bool   // if true, SessionID will be empty
+	CustomSessionID  []byte // if not nil, SessionID will be set to this value
 
 	// TLSFingerprintLink string // ?? link to tlsfingerprint.io for informational purposes
 }
