@@ -3197,12 +3197,18 @@ func (uconn *UConn) ApplyPreset(p *ClientHelloSpec) error {
 			hello.CipherSuites[i] = GetBoringGREASEValue(uconn.greaseSeed, ssl_grease_cipher)
 		}
 	}
-	var sessionID [32]byte
-	_, err = io.ReadFull(uconn.config.rand(), sessionID[:])
-	if err != nil {
-		return err
+
+	if !p.DisableSessionID {
+		var sessionID [32]byte
+		_, err = io.ReadFull(uconn.config.rand(), sessionID[:])
+		if err != nil {
+			return err
+		}
+		uconn.HandshakeState.Hello.SessionId = sessionID[:]
+	} else {
+		uconn.HandshakeState.Hello.SessionId = nil
 	}
-	uconn.HandshakeState.Hello.SessionId = sessionID[:]
+
 	uconn.Extensions = make([]TLSExtension, len(p.Extensions))
 	copy(uconn.Extensions, p.Extensions)
 
