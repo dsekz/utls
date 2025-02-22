@@ -3199,18 +3199,18 @@ func (uconn *UConn) ApplyPreset(p *ClientHelloSpec) error {
 	}
 
 	if !p.DisableSessionID {
-		var sessionID [32]byte
-		_, err = io.ReadFull(uconn.config.rand(), sessionID[:])
-		if err != nil {
-			return err
+		if p.CustomSessionID == nil {
+			var sessionID [32]byte
+			_, err := io.ReadFull(uconn.config.rand(), sessionID[:])
+			if err != nil {
+				return err
+			}
+			uconn.HandshakeState.Hello.SessionId = sessionID[:]
+		} else {
+			uconn.HandshakeState.Hello.SessionId = p.CustomSessionID
 		}
-		uconn.HandshakeState.Hello.SessionId = sessionID[:]
 	} else {
 		uconn.HandshakeState.Hello.SessionId = nil
-	}
-
-	if p.CustomSessionID != nil {
-		uconn.HandshakeState.Hello.SessionId = p.CustomSessionID
 	}
 
 	uconn.Extensions = make([]TLSExtension, len(p.Extensions))
